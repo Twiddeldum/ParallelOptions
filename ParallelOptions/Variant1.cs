@@ -1,20 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+
 namespace ParallelOptions;
 
 using System.Threading.Tasks;
 
 public class Variant1
 {
-    private const int MaxListValue = 100;
-    private List<int> list1 = new();
-    private List<int> list2 = new();
-    private List<int> list3 = new();
+    private readonly List<int> _list1 = new();
+    private readonly List<int> _list2 = new();
+    private readonly List<int> _list3 = new();
 
     public async Task Run()
     {
         Console.WriteLine("Starting...");
-        FillListWithValues(list1);
-        FillListWithValues(list2);
-        FillListWithValues(list3);
+        FillListWithValues(_list1);
+        FillListWithValues(_list2);
+        FillListWithValues(_list3);
 
         var parallelOptions = new ParallelOptions
         {
@@ -22,15 +25,15 @@ public class Variant1
         };
 
         var parallelRuns = new List<Task>();
-        parallelRuns.Add(Task.Run(() => RunList(list1, parallelOptions, 1)));
-        parallelRuns.Add(Task.Run(() => RunList(list2, parallelOptions, 2)));
-        parallelRuns.Add(Task.Run(() => RunList(list3, parallelOptions, 3)));
+        parallelRuns.Add(Task.Run(() => RunList(_list1, parallelOptions, 1)));
+        parallelRuns.Add(Task.Run(() => RunList(_list2, parallelOptions, 2)));
+        parallelRuns.Add(Task.Run(() => RunList(_list3, parallelOptions, 3)));
         parallelRuns.Add(Task.Run(() =>
         {
-            for (var i = 0; i <= MaxListValue; i++)
+            for (var i = 0; i <= Constants.MaxListValue; i++)
             {
                 Console.WriteLine("---------------------------");
-                Thread.Sleep(TimeSpan.FromMilliseconds(10000));
+                Thread.Sleep(TimeSpan.FromMilliseconds(Constants.WaitTimeSpanValue));
             }
         }));
 
@@ -45,7 +48,7 @@ public class Variant1
 
     static void FillListWithValues(ICollection<int> list)
     {
-        for (var i = 0; i <= MaxListValue; i++)
+        for (var i = 0; i <= Constants.MaxListValue; i++)
         {
             list.Add(i);
         }
@@ -54,6 +57,6 @@ public class Variant1
     void DisplaySomething(int listNo, int index)
     {
         Console.WriteLine($"{DateTime.Now} List no: {listNo}, Thread no: {index}");
-        Thread.Sleep(TimeSpan.FromMilliseconds(10000));
+        Thread.Sleep(TimeSpan.FromMilliseconds(Constants.WaitTimeSpanValue));
     }
 }
